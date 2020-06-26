@@ -233,6 +233,8 @@ int main(void) {
       #endif
 
       // ####### LOW-PASS FILTER #######
+      //cmd1 = 0 ;
+      //cmd2 = 50 ;
       rateLimiter16(cmd1, RATE, &steerRateFixdt);
       rateLimiter16(cmd2, RATE, &speedRateFixdt);
       filtLowPass32(steerRateFixdt >> 4, FILTER, &steerFixdt);
@@ -253,7 +255,7 @@ int main(void) {
       // speedR = CLAMP((int)(speed * SPEED_COEFFICIENT -  steer * STEER_COEFFICIENT), INPUT_MIN, INPUT_MA);
       // speedL = CLAMP((int)(speed * SPEED_COEFFICIENT +  steer * STEER_COEFFICIENT), INPUT_MIN, INPUT_MA);
       mixerFcn(speed << 4, steer << 4, &speedR, &speedL);   // This function implements the equations above
-
+      //speedL = 0 ;
       // ####### SET OUTPUTS (if the target change is less than +/- 100) #######
       if ((speedL > lastSpeedL-100 && speedL < lastSpeedL+100) && (speedR > lastSpeedR-100 && speedR < lastSpeedR+100) && timeout < TIMEOUT) {
         #ifdef INVERT_R_DIRECTION
