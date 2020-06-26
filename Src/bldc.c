@@ -45,7 +45,7 @@ extern ExtU rtU_Right;                  /* External inputs */
 extern ExtY rtY_Right;                  /* External outputs */
 // ###############################################################################
 
-static int16_t pwm_margin = 100;        /* This margin allows to always have a window in the PWM signal for proper Phase currents measurement */
+static int16_t pwm_margin = 110;        /* This margin allows to always have a window in the PWM signal for proper Phase currents measurement */
 
 extern uint8_t ctrlModReq;
 static int16_t curDC_max = (I_DC_MAX * A2BIT_CONV);
@@ -77,7 +77,7 @@ static int16_t offsetdcl    = 2000;
 static int16_t offsetdcr    = 2000;
 
 int16_t        batVoltage       = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
-static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 20;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
+static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
 
 // =================================
 // DMA interrupt frequency =~ 16 kHz
@@ -171,7 +171,9 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Left.i_DCLink     = curL_DC;    
     
     /* Step the controller */
+    #ifdef MOTOR_LEFT_ENA    
     BLDC_controller_step(rtM_Left);
+    #endif
 
     /* Get motor outputs here */
     ul            = rtY_Left.DC_phaA;
@@ -206,7 +208,9 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Right.i_DCLink      = curR_DC;
 
     /* Step the controller */
+    #ifdef MOTOR_RIGHT_ENA
     BLDC_controller_step(rtM_Right);
+    #endif
 
     /* Get motor outputs here */
     ur            = rtY_Right.DC_phaA;
